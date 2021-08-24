@@ -1,32 +1,20 @@
-#######################
-# Makefile
-#######################
+.PHONY : clean test
 
-# compile and lib parameter
-CC      := g++
-LIBS    :=
-LDFLAGS :=
-DEFINES :=
-INCLUDE := -I. -I/usr/include -I/usr/loca/include
-CFLAGS  := 
-CXXFLAGS:= 
+CPPFLAGS= -std=c++17 -fPIC -Wall -Wextra -O3 -g
+LDFLAGS= -std=c++17 -shared
 
-# link parameter
-LIB := libmtrie.so
+SOURCES = mhasher.external.cpp binaryset.external.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
 
-#g++ -std=c++17 -O3 -c -fPIC -Wall -I/usr/include/  ./*.cpp
-#g++ -shared -O3 -o libmtrie.so  ./*.o -l:/libtbb.so -l:libcryptopp.so
+TARGET=libmhasher.so
 
-#link
-$(LIB):mtrie.external.o
-	$(CC) -shared -O3 -o $(LIB)  ./*.o -l:/libtbb.so -l:libcryptopp.so
+all: $(TARGET)
 
-
-#compile
-mtrie.external.o:mtrie.external.cpp
-	$(CC) -std=c++17 -O3 -c -fPIC -Wall -I/usr/include/ ./*.cpp
-	
-
-# clean
 clean:
-	rm -fr *.o *.gch 
+	rm -f $(OBJECTS) $(TARGET) test
+
+test:
+	g++ $(CPPFLAGS) mhasher.external.cpp mhasher_external_test.cpp main.cpp -ltbb -lcryptopp -o test
+
+$(TARGET) : $(OBJECTS)
+	g++ $(CPPFLAGS) $(OBJECTS) -o $@ $(LDFLAGS) -lboost_system -lcryptopp -ltbb

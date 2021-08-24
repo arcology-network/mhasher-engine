@@ -1,6 +1,5 @@
 #pragma once
 namespace Hashes {
-
 	template<typename T, int H>
 	static void Sort(char* bytes, std::vector<std::pair<T, uint64_t>>& numbers) {
 		tbb::parallel_for(std::size_t(0), std::size_t(numbers.size()), [&](std::size_t i) {

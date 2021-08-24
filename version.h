@@ -1,3 +1,3 @@
 #pragma once
 const static char* product = "Merkle hasher";
-const static char* version = "2008301149";
+const static char* version = "2108231737";

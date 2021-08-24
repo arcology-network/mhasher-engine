@@ -11,6 +11,14 @@ extern "C" {
 	void sort_hashes();
 	void unique_hashes();
 
+	bool test_sort_strings();
+	bool test_unique_strings();
+	bool test_remove_strings();
+	bool test_remove_strings_2();
+
+	void benchmark_sort_strings();
+	void benchamark_unique_strings();
+	bool benchmark_remove_strings_1();
 #ifdef __cplusplus
 }
 #endif

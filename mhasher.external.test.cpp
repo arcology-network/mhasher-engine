@@ -28,9 +28,7 @@ void c_interface_test()
 }
 
 
-void merkel_trie_insertion_test()
-{
-
+void merkel_trie_insertion_test() {
 	//Mhasher::Test::merkel_trie_insertion_test();
 	std::string source = "0123456789abcdef!@#$%^&*()+_)&*"; // 16
 
@@ -47,27 +45,22 @@ void merkel_trie_insertion_test()
 	clock_t t = clock();
 	auto Mhasher = Mhasher::Trie<CryptoPP::SHA3_256, 2>(individualHashes);
 
-	for (auto hash : individualHashes)
-	{
+	for (auto hash : individualHashes) {
 		auto proofs = Mhasher.GetMhasherProof(hash);
-
-
 		if (
 			std::find(proofs.back().begin(), proofs.back().end(), Mhasher.GetHexRootHash()) == proofs.back().end() ||     // leaf hash matches 
 			std::find(proofs.front().begin(), proofs.front().end(), hash) == proofs.front().end() ||    // root hash matches
-			!Hasher::VerifyProofs<CryptoPP::SHA3_256, 2>(proofs))     // path verified 
-		{
+			!Hasher::VerifyProofs<CryptoPP::SHA3_256, 2>(proofs)) {     // path verified 
+		
 			std::cout << "Failed to get proofs for " + hash << std::endl;
 			return;
 		}
 	}
-
 	std::cout << "All Mhasher proofs have been successfully retrieved and validated !" << std::endl;
 	return;
 }
 
-void variable_raw_input_lengths_test()
-{
+void variable_raw_input_lengths_test() {
 	int unitCount = 4;
 
 	char  msg[] = "0123456789a";
@@ -81,8 +74,7 @@ void variable_raw_input_lengths_test()
 	Mhasher::Trie<CryptoPP::RIPEMD160, 2>::Checksum(msg, strlen(msg), &hash[0]);
 }
 
-void performance_test_100_x_10000000()
-{
+void performance_test_100_x_10000000() {
 	int unitLength = 100;
 	int unitCount = 10000000;
 
@@ -105,30 +97,23 @@ void performance_test_100_x_10000000()
 		<<std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() <<" ms" << std::endl;
 }
 
-
-void basic_2d_input_test()
-{
+void basic_2d_input_test() {
 	uint64_t lengthVec[3] = { 3,3 };
 
 	int row = 2;
 	int col = 3;
 
-	char** bytes = new char*[row];
-	
+	char** bytes = new char*[row];	
 	bytes[0] = new char[col];
 	std::fill_n(bytes[0], col,'a');
-
 	bytes[1] = new char[col];
 	std::fill_n(bytes[1], col, 'b');
-
 	bytes[2] = new char[col];
 	std::fill_n(bytes[2], col, 'c');
-
 
 	char rootHash[CryptoPP::RIPEMD160::DIGESTSIZE];
 	ChecksumRIPEMD1602D(bytes, lengthVec, 2, rootHash);
 }
-
 
 void sort_hashes() {
 	std::vector<std::string> hashes(500000);
@@ -210,3 +195,4 @@ void unique_hashes() {
 		std::cout << "unique_hashes(): Successful !" << std::endl;
 	}
 }
+

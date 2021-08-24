@@ -109,7 +109,7 @@ extern "C" {
 	void MultipleHashesSHA32562D(char** bytes, uint64_t* counts, uint64_t length, char** hashes) {  	//Compute hashes from multiple raw input using RIPEMD160
 		Mhasher::Trie<CryptoPP::SHA3_256, 2>::HashesFromRaw2D(bytes, counts, length, hashes);
 	}
-
+	
 	void GetVersion(char* ver) {
 		std::strcpy(ver, version);
 	}

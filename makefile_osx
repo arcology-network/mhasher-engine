@@ -1,12 +1,12 @@
 .PHONY : clean test
 
 CPPFLAGS= -std=c++17 -fPIC -Wall -Wextra -O3 -g
-LDFLAGS= -std=c++17 -shared
+LDFLAGS= -std=c++17 -dynamiclib
 
 SOURCES = mhasher.external.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
-TARGET=libmhasher.so
+TARGET=libmhasher.dylib
 
 all: $(TARGET)
 
@@ -17,4 +17,4 @@ test:
 	g++ $(CPPFLAGS) mhasher.external.cpp mhasher_external_test.cpp main.cpp -ltbb -lcryptopp -o test
 
 $(TARGET) : $(OBJECTS)
-	g++ $(CPPFLAGS) $(OBJECTS) -o $@ $(LDFLAGS) -lboost_system -lcryptopp -ltbb
+	g++ $(CPPFLAGS) $(OBJECTS) -o $@ $(LDFLAGS) -ltbb -lcryptopp

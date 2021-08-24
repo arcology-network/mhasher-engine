@@ -1,8 +1,7 @@
 #pragma once
 #include "stdafx.h"
 
-namespace Hasher
-{
+namespace Hasher {
 	const static unsigned pieces = 8096;
 
 	static std::string HexToString(std::string digest)	{
@@ -32,7 +31,6 @@ namespace Hasher
 
 		std::string hash(hasher.DigestSize(), '0');
 		hasher.Final((unsigned char*)&hash.data()[0]);
-
 		return hash;
 	}
 
@@ -41,7 +39,6 @@ namespace Hasher
 		H hasher;
 		std::string digest(hasher.DigestSize(), '0');
 		hasher.CalculateDigest((unsigned char*)digest.data(), (const unsigned char*)msg.data(), msg.size());
-
 		return digest;
 	}
 

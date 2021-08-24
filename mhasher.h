@@ -51,7 +51,6 @@ namespace Mhasher {
 			rootHash = hierarchy.back();
 		}
 
-
 		std::vector<std::array<std::string, N>> GetMhasherProof(std::string& targetHash) {
 			std::vector<std::array<std::string, N>> proofs;
 			int64_t pos = -1;
@@ -85,14 +84,6 @@ namespace Mhasher {
 
 					proofs.push_back(hashes);
 					pos = pos / N;
-
-					/* Debug code */
-					//std::string combined = ComputeSHA3256({ left, right });	
-					//std::string str = hierarchy[i + 1].substr(pos * targetHash.size(), targetHash.size());
-
-					//if (combined != str && !str.empty())
-					//	std::cout << "mismatch !" << std::endl;
-
 				}
 
 			/* verify first before retuning */
@@ -114,7 +105,6 @@ namespace Mhasher {
 
 		static void MhasherFromRaw2D(char** bytes, uint64_t* lengths, uint64_t count, char* hash) {
 			char* begin = new char[H::DIGESTSIZE * count];
-
 			//for(unsigned i = 0 ; i < count; i ++)
 			tbb::parallel_for(std::size_t(0), std::size_t(count), [&](std::size_t i) {
 				Hasher::Hash<H>((char*)bytes[i], lengths[i], (begin + H::DIGESTSIZE * (i)));
@@ -141,8 +131,7 @@ namespace Mhasher {
 			//for(unsigned i = 1 ; i < indVec.size(); i ++)
 			tbb::parallel_for(std::size_t(1), indVec.size(), [&](std::size_t i)	{
 				Hasher::Hash<H>(bytes + indVec[i - 1], countVec[i - 1], (begin + H::DIGESTSIZE * (i - 1)));
-			}
-			);
+			});
 	
 			Mhasher::Trie<H, N>::RootFromHashes((char*)concatenatedHashes.data(), countVec.size(), hash);
 		}
@@ -160,8 +149,7 @@ namespace Mhasher {
 				std::string data(bytes + indVec[i - 1], counts[i - 1]);
 			/*	std::string hash(H::DIGESTSIZE, '0');*/
 				Hasher::Hash<H>(&data[0], data.size(), (concatenatedHashes + H::DIGESTSIZE * (i - 1)));
-			}
-			);
+			});
 		}
 
 		static void HashesFromRaw2D(char** bytes, uint64_t* counts, uint64_t length, char** hashes)	{
@@ -177,16 +165,13 @@ namespace Mhasher {
 				std::string data(bytes[i] + indVec[i], counts[i]);
 				std::string hash(H::DIGESTSIZE, '0');
 				Hasher::Hash<H>(&data[0], data.size(), hashes[i - 1]);
-			}
-			);
+			});
 		}
 		
 	private:
 		std::string rootHash = "";
 		std::string message;
 		std::vector<std::string> hierarchy;
-		//T Hasher;
-		//N branches;
 	};
 
 }

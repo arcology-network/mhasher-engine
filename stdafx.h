@@ -2,6 +2,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <string>
+#include <string_view>
 #include <cstring>
 #include <array>
 #include <vector>
@@ -15,8 +16,11 @@
 #include <assert.h>
 #include <chrono>
 #include <math.h>
-
+#include <set>
 #include <algorithm>
+#include <execution>
+#include <unordered_map>
+#include <unordered_set>
 
 //namespace tbb = Concurrency;
 
@@ -32,6 +36,9 @@
 
 #elif _WIN32
 #include <ppl.h>
+#include <concurrent_unordered_map.h>
+#include <concurrent_unordered_set.h>
+#include <concurrent_vector.h>
 namespace tbb = Concurrency;
 #include "cryptlib.h"
 #include "hex.h"
@@ -49,6 +56,8 @@ namespace tbb = Concurrency;
 #include "hasher.h"
 #include "mhasher.h"
 #include "hashes.h"
+#include "address.h"
+#include "bytes.external.h"
 #include "mhasher.external.h"
-#include "mhasher_external_test.h"
+#include "mhasher.external.test.h"
 // TODO: reference additional headers your program requires here
