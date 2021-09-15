@@ -7,7 +7,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 	void QuickUniqueHash256(char* bytes, uint64_t inCount, char* uniqueHashes, uint64_t* outCount) {
 		Hashes::Unique<uint64_t, 32>(bytes, inCount, uniqueHashes, outCount);
 	}

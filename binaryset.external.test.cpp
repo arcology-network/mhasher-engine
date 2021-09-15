@@ -32,7 +32,92 @@ bool test_sort_strings() {
 	};
 }
 
-void benchmark_sort_strings() {
+bool test_string_engine_unique_sort() {
+	auto paths = std::vector<std::string>{
+		"ctrn0/ctrn02/ctrn000/elem4",
+		"ctrn0/ctrn00",
+		"ctrn0/ctrn00/elem1",
+		"ctrn0/ctrn00/elem0",
+		"ctrn0/ctrn00/elem2",
+		"ctrn0/ctrn01/ctrn000/elem3/ele5",
+		"ctrn0/ctrn00/elem2",
+	};
+
+	std::string bytes;
+	std::vector<uint32_t> lengths;
+	String::Concatenate(paths, bytes, lengths);
+	std::vector<char> buffer(1024);
+	
+	void* engine = Start();
+	ToBuffer(engine, (char*)bytes.data(), (char*)lengths.data(), paths.size());
+
+	uint32_t count = 0;
+	std::vector<uint32_t> outputLens(paths.size(), 0);
+	FromBuffer(engine, (char*)buffer.data(), (char*)outputLens.data(), &count);
+	
+
+	std::vector<std::string> sorted(paths.size());
+	uint32_t pos = 0;
+	for (int i = 0; i < count; i++) {
+		sorted[i] = std::string(buffer.data() + pos, outputLens[i]);
+		pos += outputLens[i];
+	}
+	
+	sorted.resize(count);
+	return sorted == std::vector<std::string> {
+			"ctrn0/ctrn00",
+			"ctrn0/ctrn00/elem0",
+			"ctrn0/ctrn00/elem1",
+			"ctrn0/ctrn00/elem2",
+			"ctrn0/ctrn02/ctrn000/elem4",
+			"ctrn0/ctrn01/ctrn000/elem3/ele5",
+	};
+	Stop(engine);
+}
+
+void benchmark_string_engine_unique_sort_1m() {
+	std::vector< std::string> paths(1000000);
+	int size = 0;
+	for (int i = 999999; i >= 0; i--) {
+		paths[i] = ("ctrn0-" + std::to_string(i) + "/" + "elem-" + std::to_string(i));
+		size += paths[i].size();
+	}
+
+	std::string bytes;
+	std::vector<uint32_t> lengths;
+	String::Concatenate(paths, bytes, lengths);
+	std::vector<char> buffer(size);
+
+	void* engine = Start();
+	auto t0 = std::chrono::steady_clock::now();
+	ToBuffer(engine, (char*)bytes.data(), (char*)lengths.data(), paths.size());
+	std::cout << "ToBuffer() 1000000 entries: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
+
+	t0 = std::chrono::steady_clock::now();
+	uint32_t count = 0;
+	GetBufferSize(engine, &count);
+	std::cout << "GetBufferSize() 1000000 entries: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
+
+	count = 0;
+	t0 = std::chrono::steady_clock::now();
+	std::vector<uint32_t> outputLens(paths.size(), 0);
+	FromBuffer(engine, (char*)buffer.data(), (char*)outputLens.data(), &count);
+	std::cout << "FromBuffer() 1000000 entries: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
+
+	t0 = std::chrono::steady_clock::now();
+	Stop(engine);
+	std::cout << "Stop(engine): " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
+
+	std::vector<std::string> sorted(paths.size());
+	uint32_t pos = 0;
+	for (int i = 0; i < count; i++) {
+		sorted[i] = std::string(buffer.data() + pos, outputLens[i]);
+		pos += outputLens[i];
+	}
+}
+
+
+void benchmark_sort_strings_1m() {
 	std::vector< std::string> paths;
 	for (int i = 1000000 ; i > 0; i--) {
 		paths.push_back("ctrn0-" + std::to_string(i) + "/" + "elem-" + std::to_string(i));
@@ -81,12 +166,10 @@ bool test_unique_strings() {
 	std::cout << "test_unique_strings: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
 
 	auto num = std::count_if(toKeep.begin(), toKeep.end(), [](uint8_t idx) { return idx == 255; });
-	std::cout << "test_unique_strings()  =>  Expected entires left 10 actual : " << num << std::endl;
-
 	return num == 10;
 }
 
-void benchamark_unique_strings() {
+void benchamark_unique_strings_1m() {
 	std::vector< std::string> paths;
 	for (int i = 1000000; i > 0; i--) {
 		paths.push_back("ctrn0-" + std::to_string(i) + "/" + "elem-" + std::to_string(i));
@@ -131,8 +214,6 @@ bool test_remove_strings() {
 
 	// Check the results
 	auto num = std::count_if(toKeep.begin(), toKeep.end(), [](uint8_t idx) { return idx == 255; });
-	std::cout << "test_remove_strings()  =>  There should be 1 entires left and the actual number of entries left is: " << num << std::endl;
-
 	return num == 3;
 }
 
@@ -159,12 +240,10 @@ bool test_remove_strings_2() {
 	
 	// Check the results
 	auto num = std::count_if(toKeep.begin(), toKeep.end(), [](uint32_t idx) { return idx == 255; });
-	std::cout << "Expected 9 entires left and the actual is: " << num << std::endl;
-
 	return num == 9;
 }
 
-bool benchmark_remove_strings_1() {
+void benchmark_remove_strings_1m() {
 	std::vector< std::string> paths;
 	for (auto i = 0; i < 1000000; i ++) {  //length problem !!!
 		paths.push_back("ctrn0-" + std::to_string(0) + "/" + "elem-" + std::to_string(i));
@@ -185,8 +264,5 @@ bool benchmark_remove_strings_1() {
 	std::cout << "benchmark_remove_strings_1(): Remove 1000000 entries in: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
 
 	// Check the results
-	auto num = std::count_if(toKeep.begin(), toKeep.end(), [](uint32_t idx) { return idx == 255; });
-	std::cout << " Expected 1000000 entires, actual: " << num << std::endl;
-
-	return num == 0;
+	auto num = std::count(toKeep.begin(), toKeep.end(), 255);
 }

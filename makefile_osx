@@ -3,7 +3,7 @@
 CPPFLAGS= -std=c++17 -fPIC -Wall -Wextra -O3 -g
 LDFLAGS= -std=c++17 -dynamiclib
 
-SOURCES = mhasher.external.cpp
+SOURCES = mhasher.external.cpp binaryset.external.cpp string.engine.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
 TARGET=libmhasher.dylib
@@ -14,7 +14,7 @@ clean:
 	rm -f $(OBJECTS) $(TARGET) test
 
 test:
-	g++ $(CPPFLAGS) mhasher.external.cpp mhasher_external_test.cpp main.cpp -ltbb -lcryptopp -o test
+	g++ $(CPPFLAGS) mhasher.external.cpp mhasher_external_test.cpp binaryset.external.cpp binaryset.external.test.cpp main.cpp -ltbb -lcryptopp -o test
 
 $(TARGET) : $(OBJECTS)
 	g++ $(CPPFLAGS) $(OBJECTS) -o $@ $(LDFLAGS) -ltbb -lcryptopp

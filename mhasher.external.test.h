@@ -16,9 +16,12 @@ extern "C" {
 	bool test_remove_strings();
 	bool test_remove_strings_2();
 
-	void benchmark_sort_strings();
-	void benchamark_unique_strings();
-	bool benchmark_remove_strings_1();
+	void benchmark_sort_strings_1m();
+	void benchamark_unique_strings_1m();
+	void benchmark_remove_strings_1m();
+	void benchmark_string_engine_unique_sort_1m();
+
+	bool test_string_engine_unique_sort();
 #ifdef __cplusplus
 }
 #endif

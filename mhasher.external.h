@@ -8,7 +8,6 @@
 extern "C" {
 #endif
 	void SortHash256(char* bytes, uint64_t count, uint64_t* indices);
-
 	void QuickUniqueHash256(char* bytes, uint64_t inCount, char* uniqueHashes, uint64_t* outCount);
 	void UniqueHash256(char* bytes, uint64_t inCount, char* uniqueHashes, uint64_t* outCount);
 

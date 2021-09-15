@@ -30,7 +30,7 @@ namespace Hashes {
 		*outCount = std::distance(numbers.begin(), 
 			std::unique(numbers.begin(), numbers.end(), [](auto& lft, auto& rgt) {return lft.first == rgt.first; }));
 
-		tbb::parallel_for(std::size_t(0), *outCount, [&](std::size_t i) {
+		tbb::parallel_for(std::size_t(0), std::size_t(*outCount), [&](std::size_t i) {
 			memcpy(uniqueHashes + i * H, bytes + numbers[i].second * H, H);
 		});
 	}
