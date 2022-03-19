@@ -4,6 +4,10 @@
 int main(int argc, char* argv[]) {	
 	//benchmark_string_engine_unique_sort_1m();
 
+	if (!test_unique_sort_strings()) {
+		std::cout << "Error: test_unique_sort_strings() failed !!" << std::endl;
+	}
+
 	if (!test_string_engine_unique_sort()) {
 		std::cout << "Error: test_string_engine_unique_sort() failed !!" << std::endl;
 	}

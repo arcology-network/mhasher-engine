@@ -12,11 +12,11 @@ struct Presorter {
 	uint32_t offset = 0;
 };
 
-void* Start() {
+void* StringEngineStart() {
 	return new std::set<std::pair<char*, uint32_t>, Compare>();
 }
 
-void ToBuffer(void* engine, char* path, char* pathLen, uint32_t count) {
+void StringEngineToBuffer(void* engine, char* path, char* pathLen, uint32_t count) {
 	auto presorter = (Presorter*)engine;
 	uint32_t pos = 0;
 	for (std::size_t i = 0; i < count; i++) {
@@ -25,12 +25,12 @@ void ToBuffer(void* engine, char* path, char* pathLen, uint32_t count) {
 	}		
 }
 
-void GetBufferSize(void* engine, uint32_t* count) {
+void StringEngineGetBufferSize(void* engine, uint32_t* count) {
 	auto presorter = (Presorter*)engine;
 	*count = presorter->offset;
 }
 
-void FromBuffer(void* engine, char* buffer, char* lengths, uint32_t* count) {
+void StringEngineFromBuffer(void* engine, char* buffer, char* lengths, uint32_t* count) {
 	uint32_t pos = 0;
 	uint32_t i = 0;
 	auto presorter = (Presorter*)engine;
@@ -42,10 +42,10 @@ void FromBuffer(void* engine, char* buffer, char* lengths, uint32_t* count) {
 	*count = presorter->buffer.size();
 }
 
-void Clear(void* engine) {
+void StringEngineClear(void* engine) {
 	((std::set<std::pair<char*, uint32_t>, Compare>*)engine)->clear();
 }
 
-void Stop(void* engine) {
+void StringEngineStop(void* engine) {
 	delete (std::set<std::pair<char*, uint32_t>, Compare>*)engine;
 }

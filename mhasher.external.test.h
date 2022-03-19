@@ -16,6 +16,8 @@ extern "C" {
 	bool test_remove_strings();
 	bool test_remove_strings_2();
 
+	bool test_unique_sort_strings();
+
 	void benchmark_sort_strings_1m();
 	void benchamark_unique_strings_1m();
 	void benchmark_remove_strings_1m();

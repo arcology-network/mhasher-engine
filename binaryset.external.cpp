@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-
 void Unique(char* bytes, uint32_t* lengths, uint32_t count, uint8_t* toKeep) {
 	uint32_t pos = 0;
 	std::vector<Address> strings(count);
@@ -19,6 +18,32 @@ void Unique(char* bytes, uint32_t* lengths, uint32_t count, uint8_t* toKeep) {
 	});
 }
 
+void UniqueSort(char* bytes, uint32_t* lengths, uint32_t count, uint32_t* newIndices, uint32_t* outCount) {
+	uint32_t pos = 0;
+	std::vector<Address> strings(count);
+	for (std::size_t i = 0; i < count; i++) {
+		strings[i].ptr = bytes + pos;
+		strings[i].length = lengths[i];
+		strings[i].idx = i;
+		pos += lengths[i];
+	}
+
+	tbb::parallel_sort(strings.begin(), strings.end(), [](auto lhs, auto rhs) {
+		int flag = memcmp(lhs.ptr, rhs.ptr, std::min<std::size_t>(lhs.length, rhs.length));
+		if (flag == 0)
+			return lhs.length < rhs.length;
+
+		return flag < 0;
+	});
+
+	auto last = std::unique(strings.begin(), strings.end());
+	tbb::parallel_for(std::size_t(0), std::size_t(std::distance(strings.begin(), last)), [&](std::size_t i) {
+		newIndices[i] = strings[i].idx;
+	});
+
+	*outCount = std::distance(strings.begin(), last);
+}
+
 void Sort(char* bytes, uint32_t* lengths, uint32_t count, uint32_t* newIndices) {
 	uint32_t pos = 0;
 	std::vector<Address> strings(count);
@@ -29,7 +54,14 @@ void Sort(char* bytes, uint32_t* lengths, uint32_t count, uint32_t* newIndices) 
 		pos += lengths[i];
 	}
 
-	tbb::parallel_sort(strings.begin(), strings.end());
+	tbb::parallel_sort(strings.begin(), strings.end(), [](auto lhs, auto rhs) {
+		int flag = memcmp(lhs.ptr, rhs.ptr, std::min<std::size_t>(lhs.length, rhs.length)) ;
+		if (flag == 0)
+			return lhs.length < rhs.length;
+
+		return flag < 0;
+	});
+
 	tbb::parallel_for(std::size_t(0), strings.size(), [&](std::size_t i) {
 		newIndices[i] = strings[i].idx;
 	});

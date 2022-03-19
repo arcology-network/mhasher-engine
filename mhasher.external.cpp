@@ -25,7 +25,7 @@ extern "C" {
 	}
 
 	/*==== Compute hashes from multiple raw input data sets, build the binary Mhasher trie and compute the root hash  ====*/
-	void ChecksumKecaak256(char* bytes, uint64_t length, char* rootHash) {
+	void Checksumsha3256(char* bytes, uint64_t length, char* rootHash) {
 		Mhasher::Trie<CryptoPP::Keccak_256, 2>::Checksum(bytes, length, rootHash);
 	}
 
@@ -46,7 +46,7 @@ extern "C" {
 		Mhasher::Trie<CryptoPP::SHA3_256, 2>::MhasherFromRaw2D(bytes, lengthVec, count, rootHash);
 	}
 
-	void ChecksumKecaak2562D(char** bytes, uint64_t* lengthVec, uint64_t count, char* rootHash)	{
+	void Checksumsha32562D(char** bytes, uint64_t* lengthVec, uint64_t count, char* rootHash)	{
 		Mhasher::Trie<CryptoPP::Keccak_256, 2>::MhasherFromRaw2D(bytes, lengthVec, count, rootHash);
 	}
 
@@ -83,25 +83,25 @@ extern "C" {
 	}
 
 	/*==============  Compute hashes from multiple raw input  =============== */
-	void MultipleHashesKecaak256(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes) {
+	void keccak256(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes) {
 		Mhasher::Trie<CryptoPP::Keccak_256, 2>::HashesFromRaw(bytes, counts, length, concatenatedHashes);
 	}
 
-	void MultipleHashesRIPEMD160(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes) {	//Compute hashes from multiple raw input using RIPEMD160
+	void ripemd160(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes) {	//Compute hashes from multiple raw input using RIPEMD160
 		Mhasher::Trie<CryptoPP::RIPEMD160, 2>::HashesFromRaw(bytes, counts, length, concatenatedHashes);
 	}
 
-	void MultipleHashesSHA3256(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes) {  	//Compute hashes from multiple raw input using RIPEMD160
+	void sha3256(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes) {  	//Compute hashes from multiple raw input using RIPEMD160
 		Mhasher::Trie<CryptoPP::SHA3_256, 2>::HashesFromRaw(bytes, counts, length, concatenatedHashes);
 	}
 
 
 	/*============== 2D input  =============== */
-	void MultipleHashesKecaak2562D(char** bytes, uint64_t* counts, uint64_t length, char** hashes) {
+	void sha32562D(char** bytes, uint64_t* counts, uint64_t length, char** hashes) {
 		Mhasher::Trie<CryptoPP::Keccak_256, 2>::HashesFromRaw2D(bytes, counts, length, hashes);
 	}
 
-	void MultipleHashesRIPEMD1602D(char** bytes, uint64_t* counts, uint64_t length, char** hashes) { 	//Compute hashes from multiple raw input using RIPEMD160
+	void ripemd1602D(char** bytes, uint64_t* counts, uint64_t length, char** hashes) { 	//Compute hashes from multiple raw input using RIPEMD160
 		Mhasher::Trie<CryptoPP::RIPEMD160, 2>::HashesFromRaw2D(bytes, counts, length, hashes);
 	}
 

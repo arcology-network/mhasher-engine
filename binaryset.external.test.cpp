@@ -8,6 +8,7 @@ bool test_sort_strings() {
 		"ctrn0/ctrn00/elem0",
 		"ctrn0/ctrn01/ctrn000/elem3/ele5",
 		"ctrn0/ctrn00/elem2",
+		"ctrn0/ctrn02/",
 	};
 
 	std::string bytes;
@@ -27,8 +28,9 @@ bool test_sort_strings() {
 		"ctrn0/ctrn00/elem0",
 		"ctrn0/ctrn00/elem1",
 		"ctrn0/ctrn00/elem2",
+		"ctrn0/ctrn01/ctrn000/elem3/ele5",
+		"ctrn0/ctrn02/",
 		"ctrn0/ctrn02/ctrn000/elem4",
-		"ctrn0/ctrn01/ctrn000/elem3/ele5",	
 	};
 }
 
@@ -48,12 +50,12 @@ bool test_string_engine_unique_sort() {
 	String::Concatenate(paths, bytes, lengths);
 	std::vector<char> buffer(1024);
 	
-	void* engine = Start();
-	ToBuffer(engine, (char*)bytes.data(), (char*)lengths.data(), paths.size());
+	void* engine = StringEngineStart();
+	StringEngineToBuffer(engine, (char*)bytes.data(), (char*)lengths.data(), paths.size());
 
 	uint32_t count = 0;
 	std::vector<uint32_t> outputLens(paths.size(), 0);
-	FromBuffer(engine, (char*)buffer.data(), (char*)outputLens.data(), &count);
+	StringEngineFromBuffer(engine, (char*)buffer.data(), (char*)outputLens.data(), &count);
 	
 
 	std::vector<std::string> sorted(paths.size());
@@ -72,7 +74,7 @@ bool test_string_engine_unique_sort() {
 			"ctrn0/ctrn02/ctrn000/elem4",
 			"ctrn0/ctrn01/ctrn000/elem3/ele5",
 	};
-	Stop(engine);
+	StringEngineStop(engine);
 }
 
 void benchmark_string_engine_unique_sort_1m() {
@@ -88,24 +90,24 @@ void benchmark_string_engine_unique_sort_1m() {
 	String::Concatenate(paths, bytes, lengths);
 	std::vector<char> buffer(size);
 
-	void* engine = Start();
+	void* engine = StringEngineStart();
 	auto t0 = std::chrono::steady_clock::now();
-	ToBuffer(engine, (char*)bytes.data(), (char*)lengths.data(), paths.size());
-	std::cout << "ToBuffer() 1000000 entries: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
+	StringEngineToBuffer(engine, (char*)bytes.data(), (char*)lengths.data(), paths.size());
+	std::cout << "StringEngineToBuffer() 1000000 entries: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
 
 	t0 = std::chrono::steady_clock::now();
 	uint32_t count = 0;
-	GetBufferSize(engine, &count);
+	StringEngineGetBufferSize(engine, &count);
 	std::cout << "GetBufferSize() 1000000 entries: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
 
 	count = 0;
 	t0 = std::chrono::steady_clock::now();
 	std::vector<uint32_t> outputLens(paths.size(), 0);
-	FromBuffer(engine, (char*)buffer.data(), (char*)outputLens.data(), &count);
+	StringEngineFromBuffer(engine, (char*)buffer.data(), (char*)outputLens.data(), &count);
 	std::cout << "FromBuffer() 1000000 entries: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
 
 	t0 = std::chrono::steady_clock::now();
-	Stop(engine);
+	StringEngineStop(engine);
 	std::cout << "Stop(engine): " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
 
 	std::vector<std::string> sorted(paths.size());
@@ -142,7 +144,7 @@ void benchmark_sort_strings_1m() {
 
 bool test_unique_strings() {
 	auto paths = std::vector<std::string>{
-		"ctrn0/ctrn00",+
+		"ctrn0/ctrn00",
 		"ctrn0/ctrn00/elem0",
 		"ctrn0/ctrn00/elem1",
 		"ctrn0/ctrn00/elem2",
@@ -167,6 +169,53 @@ bool test_unique_strings() {
 
 	auto num = std::count_if(toKeep.begin(), toKeep.end(), [](uint8_t idx) { return idx == 255; });
 	return num == 10;
+}
+
+bool test_unique_sort_strings() {
+	auto paths = std::vector<std::string>{
+		"ctrn0/ctrn00",
+		"ctrn0/ctrn00/elem0",
+		"ctrn0/ctrn00/elem1",
+		"ctrn0/ctrn00/elem2",
+		"ctrn0/ctrn00/ctrn000/elem3",
+		"ctrn0/ctrn00/ctrn000/elem4",
+		"ctrn0/ctrn01/elem3",
+		"ctrn0/ctrn01/elem4",
+		"ctrn0/ctrn02/elem3",
+		"ctrn0/ctrn02/elem4",
+		"ctrn0/ctrn00/elem0",
+		"ctrn0/ctrn00/elem2",
+	};
+
+	std::string bytes;
+	std::vector<uint32_t> lengths;
+	String::Concatenate(paths, bytes, lengths);
+	//std::vector<uint8_t> toKeep(paths.size(), 0);
+	std::vector<uint32_t> indices(paths.size());
+
+	uint32_t outLength = 0;
+	std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
+	UniqueSort(bytes.data(), lengths.data(), lengths.size(), indices.data(), &outLength);
+	std::cout << "test_unique_strings: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t0).count() << " ms" << std::endl;
+
+	std::vector<std::string> outPath;
+	for (std::size_t i = 0; i < outLength; i++)
+		outPath.push_back(paths[indices[i]]);
+	
+	auto target = std::vector<std::string>{
+		"ctrn0/ctrn00",
+		"ctrn0/ctrn00/elem0",
+		"ctrn0/ctrn00/elem1",
+		"ctrn0/ctrn00/elem2",
+		"ctrn0/ctrn01/elem3",
+		"ctrn0/ctrn01/elem4",
+		"ctrn0/ctrn02/elem3",
+		"ctrn0/ctrn02/elem4",
+		"ctrn0/ctrn00/ctrn000/elem3",
+		"ctrn0/ctrn00/ctrn000/elem4",
+	};
+
+	return outPath == target;
 }
 
 void benchamark_unique_strings_1m() {

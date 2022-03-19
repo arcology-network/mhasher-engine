@@ -12,7 +12,7 @@ extern "C" {
 	void UniqueHash256(char* bytes, uint64_t inCount, char* uniqueHashes, uint64_t* outCount);
 
 	/*--- Compute hashes from multiple raw input data sets and then compute the root hash  -----*/
-	void ChecksumKecaak256(char* bytes, uint64_t length, char* rootHash);
+	void Checksumsha3256(char* bytes, uint64_t length, char* rootHash);
 	void ChecksumRIPEMD160(char* bytes, uint64_t length, char* rootHash);
 	void ChecksumSHA3256  (char* bytes, uint64_t length, char* rootHash);
 
@@ -31,18 +31,18 @@ extern "C" {
 	void SingleHashSHA3256(char* bytes, uint64_t length, char* hash);
 
 	/*-----Compute hashes from multiple raw input---- */
-	void MultipleHashesKecaak256(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes);
-	void MultipleHashesRIPEMD160(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes);
-	void MultipleHashesSHA3256(char* bytes, uint64_t* counts, uint64_t length, char* concatenatedHashes);
+	void keccak256(char* bytes, uint64_t* lengths, uint64_t counts, char* concatenatedHashes);
+	void ripemd160(char* bytes, uint64_t* lengths, uint64_t counts, char* concatenatedHashes);
+	void sha3256(char* bytes, uint64_t* lengths, uint64_t counts, char* concatenatedHashes);
 
 
 	///*============== 2D input  =============== */
-	void MultipleHashesKecaak2562D(char** bytes, uint64_t* counts, uint64_t length, char** hashes);
-	void MultipleHashesRIPEMD1602D(char** bytes, uint64_t* counts, uint64_t length, char** hashes);
+	void sha32562D(char** bytes, uint64_t* counts, uint64_t length, char** hashes);
+	void ripemd1602D(char** bytes, uint64_t* counts, uint64_t length, char** hashes);
 	void MultipleHashesSHA32562D(char** bytes, uint64_t* counts, uint64_t length, char** hashes);
 	
 	/*2D array*/
-	void ChecksumKecaak2562D(char** bytes, uint64_t* lengthVec, uint64_t count, char* rootHash);
+	void Checksumsha32562D(char** bytes, uint64_t* lengthVec, uint64_t count, char* rootHash);
 	void ChecksumRIPEMD1602D(char** bytes, uint64_t* lengthVec, uint64_t count, char* rootHash);
 	void ChecksumSHA32562D(char** bytes, uint64_t* lengthVec, uint64_t count, char* rootHash);
 
